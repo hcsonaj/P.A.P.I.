@@ -1,10 +1,10 @@
-module.exports = (client, message, Discord) => {
+module.exports = (client, message, MessageEmbed) => {
 
   // DATA
-  const stats = client.guilds.cache.get('826515888449781780');
+  const stats = client.guilds.cache.get('835160805603147878');
   //console.log(stats.roles.cache);
 
-  const embedTemplate = new Discord.MessageEmbed()
+  const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
 
 
@@ -45,10 +45,9 @@ module.exports = (client, message, Discord) => {
     statsEmoji += 1;
   })
 
-
   embedTemplate.addFields(
     { name: 'Name', value: '```' + stats.name + '```', inline: true },
-    { name: 'Owner', value: '```' + client.users.cache.get(stats.ownerID).username + '```', inline: true },
+    { name: 'Owner', value: '```' + client.users.cache.get(stats.ownerId).username + '```', inline: true },
     { name: 'Members', value: '```' + stats.memberCount + '```' },
     { name: 'ID', value: '```' + stats.id + '```', inline: true },
     { name: 'Region', value: '```' + stats.region + '```', inline: true },
@@ -63,6 +62,7 @@ module.exports = (client, message, Discord) => {
   embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
   embedTemplate.setFooter('P.A.P.I. - Bot');      
 
-  message.reply(embedTemplate);
+  message.reply({ embeds: [embedTemplate] });
+  message.delete();
 
 }

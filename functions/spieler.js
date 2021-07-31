@@ -1,4 +1,4 @@
-module.exports = (message, con, Discord) => {
+module.exports = (message, con, MessageEmbed) => {
 
   var user = message.author.username + '#' + message.author.discriminator;
 
@@ -6,7 +6,7 @@ module.exports = (message, con, Discord) => {
 
     if(err){ throw err }
 
-    const embedTemplate = new Discord.MessageEmbed()
+    const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
  
     embedTemplate.setTitle('P.A.P.I. - Deine Anmeldungen auf der Webseite');
@@ -26,7 +26,8 @@ module.exports = (message, con, Discord) => {
     }
 
     embedTemplate.setFooter('P.A.P.I. - Bot');  
-    message.reply(embedTemplate);    
+    message.reply({ embeds: [embedTemplate] });
+    message.delete();  
 
   });
 

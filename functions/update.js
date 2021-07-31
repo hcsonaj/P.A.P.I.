@@ -1,4 +1,4 @@
-module.exports = (client, message, con, Discord) => {
+module.exports = (client, message, con, MessageEmbed) => {
 
   htmlEntities = require("html-entities");  
 
@@ -29,7 +29,7 @@ module.exports = (client, message, con, Discord) => {
 
     if(err){ throw err }
 
-    const embedTemplate = new Discord.MessageEmbed()
+    const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
 
     cleanURL = result[0].image;
@@ -57,7 +57,8 @@ module.exports = (client, message, con, Discord) => {
       { name: 'für Beginner', value: '```' + cleanBeginner + '```', inline: true }
     )
     embedTemplate.setFooter(result[0].discord_name);  
-    message.reply(embedTemplate);   
+    message.reply({ embeds: [embedTemplate] });
+    message.delete();
 
     /* con.query(`UPDATE pap_leiten SET posted = '1' WHERE id = '${result[0].id}'`,(err,result)=>{
       return;

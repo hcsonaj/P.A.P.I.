@@ -1,12 +1,12 @@
 const addReactions = (message, reactions) => {
-  message.react("📖")
+ message.react("📖")
   reactions.shift()
   message.react("🎲")
   reactions.shift()
 /*   message.react("🐣")
   reactions.shift()
   message.react("👂")
-  reactions.shift() */
+  reactions.shift()*/
   if (reactions.length > 0) {
     setTimeout(() => addReactions(message, reactions), 750)
   }
@@ -28,5 +28,5 @@ module.exports = async (client, id, text, reactions = []) => {
         addReactions(message[1], reactions)
       }
     }
-  })
+  }) 
 }

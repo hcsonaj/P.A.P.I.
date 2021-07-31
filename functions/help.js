@@ -1,4 +1,4 @@
-module.exports = (client, message, Discord) => {
+module.exports = (client, message, MessageEmbed) => {
 
   var resultDescription = 'Keine Sorge, ich kann dir helfen <@' + message.author.id + '>:\n\n';
 
@@ -24,7 +24,7 @@ module.exports = (client, message, Discord) => {
 
   resultDescription += '```!papi leiter:\nMit diesem Command erhälst du eine Liste mit den Spielrunden, die du auf der Webseite ausgehängt hast.```\n';
 
-  const embedTemplate = new Discord.MessageEmbed()
+  const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
 
   embedTemplate.setTitle('P.A.P.I. - Hilfe');
@@ -32,6 +32,6 @@ module.exports = (client, message, Discord) => {
   embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
   embedTemplate.setFooter('P.A.P.I. - Bot');      
 
-  message.reply(embedTemplate);
+  message.reply({ embeds: [embedTemplate] });
 
 }

@@ -1,15 +1,30 @@
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
+const { joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, StreamType } = require('@discordjs/voice');
  
-module.exports = async (client, args, message, Discord) => {
+module.exports = async (client, args, message) => {
 
   const voiceChannel = message.member.voice.channel;
 
-  if (!voiceChannel) return message.channel.send('Sorry, du musst in einem Voice-Channel sein für diesen Befehl!');
+  if (!voiceChannel) return message.channel.send({content: 'Sorry, du musst in einem Voice-Channel sein für diesen Befehl!'});
   const permissions = voiceChannel.permissionsFor(message.client.user);
-  if (!permissions.has('CONNECT')) return message.channel.send('Du hast leider nicht das Recht dazu...melde dich gerne bei uns, wenn du meinst dass das ein Fehler ist.');
-  if (!permissions.has('SPEAK')) return message.channel.send('Du hast leider nicht das Recht dazu...melde dich gerne bei uns, wenn du meinst dass das ein Fehler ist.');
-  if (!args.length) return message.channel.send('Du musst uns schon mitteilen was du hören willst...');
+  if (!permissions.has('CONNECT')) return message.channel.send({content: 'Du hast leider nicht das Recht dazu...melde dich gerne bei uns, wenn du meinst dass das ein Fehler ist.'});
+  if (!permissions.has('SPEAK')) return message.channel.send({content: 'Du hast leider nicht das Recht dazu...melde dich gerne bei uns, wenn du meinst dass das ein Fehler ist.'});
+  if (!args.length) return message.channel.send({content: 'Du musst uns schon mitteilen was du hören willst...'});
+  
+
+  const connection = joinVoiceChannel({
+    channelId: voiceChannel.id,
+    guildId: voiceChannel.guildId,
+    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+  });
+
+  const player = createAudioPlayer({
+    behaviors: {
+      noSubscriber: NoSubscriberBehavior.Pause,
+    },
+  });
+
 
   const validURL = (str) =>{
       var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
@@ -22,13 +37,14 @@ module.exports = async (client, args, message, Discord) => {
 
   if(validURL(args[0])){
 
-      const  connection = await voiceChannel.join();
-      const stream  = ytdl(args[0], {filter: 'audioonly'});
+      message.reply({ content: `Gib mir ein paar Sekunden...`})
 
-      connection.play(stream, {seek: 0, volume: 1})
-      .on('finish', () =>{
-          voiceChannel.leave();
+      const stream  = createAudioResource(ytdl(args[0], {filter: 'audioonly'}), {
+        inputType: StreamType.WebmOpus,
       });
+
+      player.play(stream, { highWaterMark: 50 });
+      connection.subscribe(player);
 
       const videoFinder = async () => {
         const videoID = args[0].split("=");
@@ -37,13 +53,13 @@ module.exports = async (client, args, message, Discord) => {
       }
 
       const videoTitle = await videoFinder();
-      await message.reply(`:thumbsup: Jetzt läuft ***${videoTitle}***`)
+      await message.reply(`:thumbsup: Jetzt läuft ***${videoTitle}***`);
+      await message.delete();
 
       return
   }
 
-  
-  const  connection = await voiceChannel.join();
+  message.reply({ content: `Ich suche...`})
 
   const videoFinder = async (query) => {
       const videoResult = await ytSearch(query);
@@ -53,14 +69,19 @@ module.exports = async (client, args, message, Discord) => {
   const video = await videoFinder(args.join(' '));
 
   if(video){
-      const stream  = ytdl(video.url, {filter: 'audioonly'});
-      connection.play(stream, {seek: 0, volume: 1})
-      .on('finish', () =>{
-          voiceChannel.leave();
-      });
 
-      await message.reply(`:thumbsup: Jetzt läuft: ***${video.title}***`)
+    const stream  = createAudioResource(ytdl(video.url, {filter: 'audioonly'}), {
+      inputType: StreamType.WebmOpus,
+    });
+
+    player.play(stream, { highWaterMark: 70 });
+    connection.subscribe(player);
+
+    await message.reply({ content: `:thumbsup: Jetzt läuft: ***${video.title}***`})
+    await message.delete();
+
   } else {
-      message.channel.send('Ich hab leider keine Ergebnisse gefunden...:sad:');
+      message.channel.send({ content: 'Ich hab leider keine Ergebnisse gefunden...:sad:'});
   }
+
 }

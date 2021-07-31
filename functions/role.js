@@ -1,14 +1,14 @@
-const firstMessage = require('./minis/first-message')
+const firstMessage = require('./minis/first-message');
 
 module.exports = (client) => {
-  const channelId = '868586831837556807'
+  const channelId = '868544101518307348'
 
   const getEmoji = (emojiName) =>
     client.emojis.cache.find((emoji) => emoji.name === emojiName)
 
   const emojis = {
-    'book': 'SpielleiterInn',
-    'dice': "SpielerInn"
+    'book': 'Smile',
+    'dice': "Laugh"
     //'egg': "EinsteigerInn",
     //'ear': "ZuhörerIn"
   }
@@ -37,14 +37,15 @@ module.exports = (client) => {
       return
     }
 
-    const emoji = reaction._emoji.name
+    const emoji = reaction._emoji.name;
 
-    const { guild } = reaction.message
+    const { guild } = reaction.message;
 
-    if (emoji === "🎲") { roleName = 'SpielerIn' }
-    else if (emoji === "📖") { roleName = 'SpielleiterIn' }
+    if (emoji === "🎲") { roleName = 'Smile' }
+    else if (emoji === "📖") { roleName = 'Laugh' }
     //else if (emoji === "🐣") { roleName = 'Party' }
     //else if (emoji === "👂") { roleName = 'Party' }
+
 
     const role = guild.roles.cache.find((role) => role.name === roleName)
     const member = guild.members.cache.find((member) => member.id === user.id)

@@ -27,9 +27,10 @@ con.getConnection(function(err) {
 
 // ================= START BOT CODE ===================
 
-const Discord = require('discord.js');
-const client = new Discord.Client({
-	partials: ['MESSAGE', 'CHANNEL', 'REACTION']
+const { Client, Intents, MessageEmbed } = require('discord.js');
+const client = new Client({
+  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES ]
 });
 
 const prefix = '!papi ';
@@ -46,7 +47,8 @@ client.on('ready', () => {
 	role(client);
 });
 
-client.on('message', function(message) {
+client.on('messageCreate', function(message) {
+
 	if (message.author.bot) return;
 	if (!message.content.startsWith(prefix)) return;
 
@@ -69,9 +71,8 @@ client.on('message', function(message) {
 	switch (command) {
 		case 'update': {
       if (isAdmin) {
-        message.delete();
         const update = require('./functions/update.js');
-			  update(client, message, con, Discord);
+			  update(client, message, con, MessageEmbed);
       } else {
         message.reply('Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!')
       }
@@ -79,24 +80,21 @@ client.on('message', function(message) {
 		}
     case 'post': {
       if (isAdmin) {
-        message.delete();
         const post = require('./functions/post.js');
-			  post(client, args, message, con, Discord);
+			  post(client, args, message, con, MessageEmbed);
       } else {
         message.reply('Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!')
       }
 			break;
 		}
     case 'spieler': {
-			message.delete();
 			const spieler = require('./functions/spieler.js');
-			spieler(message, con, Discord);
+			spieler(message, con, MessageEmbed);
 			break;
 		}
     case 'leiter': {
-			message.delete();
 			const leiter = require('./functions/leiter.js');
-			leiter(message, con, Discord);
+			leiter(message, con, MessageEmbed);
 			break;
 		}
 		case 'bump': {
@@ -111,29 +109,27 @@ client.on('message', function(message) {
 		}
 		case 'roll': {
 			const rollSimple = require('./functions/roll/simple.js');
-			rollSimple(client, args, message, Discord);
+			rollSimple(client, args, message, MessageEmbed);
 			break;
 		}
 		case 'help': {
 			message.delete();
 			const help = require('./functions/help.js');
-			help(client, message, Discord);
+			help(client, message, MessageEmbed);
 			break;
 		}
 		case 'stats': {
       if (isAdmin) {
-        message.delete();
         const stats = require('./functions/stats.js');
-        stats(client, message, Discord);
+        stats(client, message, MessageEmbed);
       } else {
         message.reply('Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!')
       }
 			break;
 		}
     case 'play': {
-      message.delete();
 			const play = require('./functions/music/play.js');
-			play(client, args, message, Discord);
+			play(client, args, message);
 			break;
 		}
     case 'stop': {
@@ -154,4 +150,5 @@ client.on('message', function(message) {
 // You really don't want your token here since your repl's code
 // is publically available. We'll take advantage of a Repl.it
 // feature to hide the token we got earlier.
+
 client.login(process.env['DISCORD_TOKEN']);
