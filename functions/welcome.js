@@ -1,7 +1,7 @@
 module.exports = (client) => {
 
-  const channelID_welcome = "835160805603147880";
-  const channelID_rollenvergabe = "868544101518307348";
+  const channelID_welcome = "826515888449781782";
+  const channelID_rollenvergabe = "868586831837556807";
 
   function getRandomInt(min, max) {
     min = Math.ceil(min);

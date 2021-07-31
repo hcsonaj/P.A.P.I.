@@ -30,7 +30,7 @@ con.getConnection(function(err) {
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const client = new Client({
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES ]
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.DIRECT_MESSAGES ]
 });
 
 const prefix = '!papi ';
@@ -49,7 +49,7 @@ client.on('ready', () => {
 
 client.on('messageCreate', function(message) {
 
-	if (message.author.bot) return;
+	//if (message.author.bot) return;
 	if (!message.content.startsWith(prefix)) return;
 
 	const commandBody = message.content.slice(prefix.length);
@@ -74,16 +74,21 @@ client.on('messageCreate', function(message) {
         const update = require('./functions/update.js');
 			  update(client, message, con, MessageEmbed);
       } else {
-        message.reply('Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!')
+        message.reply({content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
       }
 			break;
 		}
     case 'post': {
       if (isAdmin) {
-        const post = require('./functions/post.js');
-			  post(client, args, message, con, MessageEmbed);
+        if (args[0]){
+          const post = require('./functions/post.js');
+			    post(client, args, message, con, MessageEmbed);
+        } else {
+          message.reply({content: 'Bitte gibt eine URL mit an, sonst funktioniert dieser Command nicht.\n\n`!papi post *url*`'})
+        }
+        
       } else {
-        message.reply('Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!')
+        message.reply({ content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
       }
 			break;
 		}
@@ -103,13 +108,18 @@ client.on('messageCreate', function(message) {
         const bump = require('./functions/bump.js');
         bump(client);
       } else {
-        message.reply('Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!')
+        message.reply({ content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
       }
 			break;
 		}
 		case 'roll': {
 			const rollSimple = require('./functions/roll/simple.js');
 			rollSimple(client, args, message, MessageEmbed);
+			break;
+		}
+    case 'poll': {
+			const poll = require('./functions/poll.js');
+			poll(client, args, message, MessageEmbed);
 			break;
 		}
 		case 'help': {
@@ -123,7 +133,7 @@ client.on('messageCreate', function(message) {
         const stats = require('./functions/stats.js');
         stats(client, message, MessageEmbed);
       } else {
-        message.reply('Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!')
+        message.reply({ content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
       }
 			break;
 		}
@@ -140,11 +150,44 @@ client.on('messageCreate', function(message) {
 		}
 		default: {
 			message.reply(
-				'Das war leider kein offizieller Command. Für Hilfe nutze bitte den Command **!papi help**'
+				{ content: 'Das war leider kein offizieller Command. Für Hilfe nutze bitte den Command **!papi help**'}
 			);
 			break;
 		}
 	}
+});
+
+var counter = 0;
+
+client.on('messageReactionAdd', async (reaction, user) => {
+
+	if (reaction.partial) {
+		try {
+			await reaction.fetch();
+		} catch (error) {
+			console.error('Ich konnte eine Nachricht nicht wiederfinden finden: ', error);
+			return;
+		}
+	}
+
+/*   console.log(reaction);
+ */
+  if (reaction.message.channel.id != '868586831837556807' && counter === 0) {
+
+    if (reaction.message.author.id != '862014814745264188') {
+
+      var messageId = reaction.message.reference.messageId;
+      var channelId = reaction.message.reference.channelId;
+      client.channels.cache.get(channelId).fetch(messageId).then(cnl => {
+        cnl.messages.fetch(messageId).then(msg => {
+          msg.reply({ content: "Entschuldige, aber der Bot ist zwischen der Nachricht und deiner Reaktion jetzt gerade neu gestartet. Deswegen kann ich dir leider nicht mehr weiterhelfen. Du müsstest deine Nachricht einmal per Hand neu eingeben:\n\n`" + msg.content + "`"});
+        })
+      });
+
+    }
+
+  }
+	
 });
 
 // You really don't want your token here since your repl's code

@@ -14,7 +14,7 @@ module.exports = (client, message, MessageEmbed) => {
 
   }
 
-  resultDescription += '```!papi roll xdy:\nMit diesem Command kannst du einen Würfelwurf ausführen. Ersetze dabei **x** mit der Anzahl an Würfen und **y** mit der Größe der Würfel.\n\nBeispiele:\n!papi roll 3d6\n!papi roll 2d100 + 17```\n';
+  resultDescription += '```!papi roll xdy\n!papi roll xwy:\nMit diesem Command kannst du einen Würfelwurf ausführen. Ersetze dabei **x** mit der Anzahl an Würfen und **y** mit der Größe der Würfel.\n\nBeispiele:\n!papi roll 3d6\n!papi roll 2d100 + 17```\n';
 
   resultDescription += '```!papi play x:\nMit diesem Command kann Musik in Voice-Channels abgespielt werden. Ersetze dafür einfach **x** mit einer URL oder füge einfach ein paar Keyword an und der Bot startet den ersten Treffer.\n\nBeispiele:\n!papi play https://www.youtube.com/watch?v=PvsQcQ1acoA\n!papi play star trek intro```\n';
 

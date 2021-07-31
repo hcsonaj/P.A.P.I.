@@ -1,7 +1,7 @@
 module.exports = (client, message, MessageEmbed) => {
 
   // DATA
-  const stats = client.guilds.cache.get('835160805603147878');
+  const stats = client.guilds.cache.get('826515888449781780');
   //console.log(stats.roles.cache);
 
   const embedTemplate = new MessageEmbed()

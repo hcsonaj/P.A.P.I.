@@ -1,7 +1,7 @@
 const firstMessage = require('./minis/first-message');
 
 module.exports = (client) => {
-  const channelId = '868544101518307348'
+  const channelId = '868586831837556807'
 
   const getEmoji = (emojiName) =>
     client.emojis.cache.find((emoji) => emoji.name === emojiName)
