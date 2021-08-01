@@ -60,9 +60,9 @@ module.exports = (client, message, con, MessageEmbed) => {
     message.reply({ embeds: [embedTemplate] });
     message.delete();
 
-    /* con.query(`UPDATE pap_leiten SET posted = '1' WHERE id = '${result[0].id}'`,(err,result)=>{
+    con.query(`UPDATE pap_leiten SET posted = '1' WHERE id = '${result[0].id}'`,(err,result)=>{
       return;
-    }) */
+    })
 /*
     message.reply(embedTemplate).then(sentEmbed => {
 

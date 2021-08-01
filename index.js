@@ -119,7 +119,7 @@ client.on('messageCreate', function(message) {
 		}
     case 'poll': {
 			const poll = require('./functions/poll.js');
-			poll(client, args, message, MessageEmbed);
+			poll(client, args, message, MessageEmbed, con);
 			break;
 		}
 		case 'help': {
@@ -170,24 +170,84 @@ client.on('messageReactionAdd', async (reaction, user) => {
 		}
 	}
 
-/*   console.log(reaction);
- */
   if (reaction.message.channel.id != '868586831837556807' && counter === 0) {
 
-    if (reaction.message.author.id != '862014814745264188') {
+    if (reaction._emoji.name === '🎲' && !user.bot) {
 
       var messageId = reaction.message.reference.messageId;
       var channelId = reaction.message.reference.channelId;
       client.channels.cache.get(channelId).fetch(messageId).then(cnl => {
         cnl.messages.fetch(messageId).then(msg => {
-          msg.reply({ content: "Entschuldige, aber der Bot ist zwischen der Nachricht und deiner Reaktion jetzt gerade neu gestartet. Deswegen kann ich dir leider nicht mehr weiterhelfen. Du müsstest deine Nachricht einmal per Hand neu eingeben:\n\n`" + msg.content + "`"});
+
+          const commandBody2 = msg.content.slice(prefix.length);
+	        const args2 = commandBody2.split(' ');
+	        const command2 = args2.shift().toLowerCase();
+
+          counter++;
+          setTimeout(() => {
+            counter = 0;
+          }, 2000)
+
+          const rollSimple = require('./functions/roll/simple.js');
+			    rollSimple(client, args2, msg, MessageEmbed);
+
         })
+      });
+
+    } else if (['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'].includes(reaction._emoji.name) && !user.bot) {
+
+      var data;
+      var argsPoll;
+
+      con.query(`SELECT * FROM bot_messages WHERE messageID = '${reaction.message.id}'`,async (err,result)=>{
+
+        data = JSON.parse(result[0].data);
+        argsPoll = result[0].args;
+
+        const redo_poll = require('./functions/redo/redo-poll.js');
+			  redo_poll(client, argsPoll, reaction.message, MessageEmbed, con, data, reaction._emoji.name, '+');
+
       });
 
     }
 
   }
 	
+});
+
+
+client.on('messageReactionRemove', async (reaction, user) => {
+
+	if (reaction.partial) {
+		try {
+			await reaction.fetch();
+		} catch (error) {
+			console.error('Ich konnte eine Nachricht nicht wiederfinden finden: ', error);
+			return;
+		}
+	}
+
+  if (reaction.message.channel.id != '868586831837556807' && counter === 0) {
+
+    if (['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'].includes(reaction._emoji.name) && !user.bot) {
+
+      var data;
+      var argsPoll;
+
+      con.query(`SELECT * FROM bot_messages WHERE messageID = '${reaction.message.id}'`,async (err,result)=>{
+
+        data = JSON.parse(result[0].data);
+        argsPoll = result[0].args;
+
+        const redo_poll = require('./functions/redo/redo-poll.js');
+			  redo_poll(client, argsPoll, reaction.message, MessageEmbed, con, data, reaction._emoji.name, '-');
+
+      });
+
+    }
+
+  }
+
 });
 
 // You really don't want your token here since your repl's code

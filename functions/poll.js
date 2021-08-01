@@ -1,4 +1,4 @@
-module.exports = (client, args, message, MessageEmbed) => {
+module.exports = (client, args, message, MessageEmbed, con) => {
 
   var question = "";
   var answers = [];
@@ -91,18 +91,23 @@ module.exports = (client, args, message, MessageEmbed) => {
 
   answers.forEach(value => {
     answerString += emojiArray[counter] + ' ' + value.name + '\n';
-    answerString += '`                    `' + ' -> *' + '0 %*' + '\n\n';
+    answerString += '`                    `' + ' -> ***' + '0 %***' + ' - 0' + '\n\n';
     counter++;
   })
 
   embedTemplate.addFields(
-    { name: 'Antwortmöglichkeiten', value: answerString }
+    { name: 'Antwortmöglichkeiten', value: answerString },
+    { name: '***ACHTUNG***', value: 'Die Reaktionen brauchen so 1 bis 1.5 Sekunden um registriert zu werden. Klickt also bitte erst auf die nächste Reaktion, wenn sich die Nachricht angepasst hat.'}
   )
 
   embedTemplate.setFooter('P.A.P.I. - Bot');  
 
 
   message.reply({ embeds: [embedTemplate] }).then(sendEmbed => {
+
+    con.query(`INSERT INTO bot_messages (messageID, args, command, data) VALUES ('${sendEmbed.id}', '${JSON.stringify(args)}', '${message.content}', '${JSON.stringify(answers)}')`,(err,result)=>{
+      return;
+    })
 
     counter = 0;
     answers.forEach(value => {
@@ -150,17 +155,22 @@ module.exports = (client, args, message, MessageEmbed) => {
         answers.forEach(value => {
           let miniPercent = (value.reactions / collectedReactions) * 100;
           answerString += emojiArray[counter] + ' ' + value.name + '\n';
-          answerString += '`' + percentBlocks[(miniPercent/5).toFixed(0)] + '`' + ' -> *' + miniPercent.toFixed(2) + ' %*' + '\n\n';
+          answerString += '`' + percentBlocks[(miniPercent/5).toFixed(0)] + '`' + ' -> ***' + miniPercent.toFixed(2) + ' %***' + ' - ' + value.reactions + '\n\n';
           counter++;
         })
 
         embedTemplateReaction.addFields(
-          { name: 'Antwortmöglichkeiten', value: answerString }
+          { name: 'Antwortmöglichkeiten', value: answerString },
+          { name: '***ACHTUNG***', value: 'Die Reaktionen brauchen so 1 bis 1.5 Sekunden um registriert zu werden. Klickt also bitte erst auf die nächste Reaktion, wenn sich die Nachricht angepasst hat.'}
         )
 
         embedTemplateReaction.setFooter('P.A.P.I. - Bot');
 
         sendEmbed.edit({ embeds: [embedTemplateReaction] });
+
+        con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
+          return;
+        })
 
         /* var emoji = "";
 
@@ -205,19 +215,21 @@ module.exports = (client, args, message, MessageEmbed) => {
           if (value.reactions === 0) {
             let miniPercent = 0;
             answerString += emojiArray[counter] + ' ' + value.name + '\n';
-            answerString += '`' + percentBlocks[0] + '`' + ' -> *0 %*' + '\n\n';
+            answerString += '`' + percentBlocks[0] + '`' + ' -> ***0 %***' + ' - ' + '0' + '\n\n';
             counter++;
           } else {
             let miniPercent = (value.reactions / collectedReactions) * 100;
             answerString += emojiArray[counter] + ' ' + value.name + '\n';
-            answerString += '`' + percentBlocks[(miniPercent/5).toFixed(0)] + '`' + ' -> *' + miniPercent.toFixed(2) + ' %*' + '\n\n';
+            answerString += '`' + percentBlocks[(miniPercent/5).toFixed(0)] + '`' + ' -> *' + miniPercent.toFixed(2) + ' %*' + ' - ' + value.reactions + '\n\n';
             counter++;
           }
           
         })
 
         embedTemplateReaction.addFields(
-          { name: 'Antwortmöglichkeiten', value: answerString }
+          { name: 'Antwortmöglichkeiten', value: answerString },
+          { name: '***ACHTUNG***', value: 'Die Reaktionen brauchen so 1 bis 1.5 Sekunden um registriert zu werden. Klickt also bitte erst auf die nächste Reaktion, wenn sich die Nachricht angepasst hat.'}
+
         )
 
         embedTemplateReaction.setFooter('P.A.P.I. - Bot');

@@ -41,8 +41,6 @@ module.exports = (client, args, message, MessageEmbed) => {
 
       }
 
-      console.log(args.length);
-
       if (args.length > 1) {
 
         if (args.length == 2) {
