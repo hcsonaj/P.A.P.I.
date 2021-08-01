@@ -196,6 +196,10 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
     } else if (['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'].includes(reaction._emoji.name) && !user.bot) {
 
+      if (reaction.message.author.id != '862014814745264188') {
+        return;
+      }
+
       var data;
       var argsPoll;
 
@@ -230,6 +234,10 @@ client.on('messageReactionRemove', async (reaction, user) => {
   if (reaction.message.channel.id != '871336259803553792' && counter === 0) {
 
     if (['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'].includes(reaction._emoji.name) && !user.bot) {
+
+      if (reaction.message.author.id != '862014814745264188') {
+        return;
+      }
 
       var data;
       var argsPoll;
