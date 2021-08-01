@@ -1,7 +1,7 @@
 module.exports = (client, message, MessageEmbed) => {
 
   // DATA
-  const stats = client.guilds.cache.get('826515888449781780');
+  const stats = client.guilds.cache.get('702197930504880208');
   //console.log(stats.roles.cache);
 
   const embedTemplate = new MessageEmbed()
@@ -10,22 +10,26 @@ module.exports = (client, message, MessageEmbed) => {
 
   // CATEGORIES
   var statsCats = 0; var statsText = 0; var statsVoice = 0;
-  var statsAnnouncement = 0; var statsStage = 0; var statsStore = 0;
+  var statsAnnouncement = 0; var statsStage = 0; var statsStore = 0; var statsThread = 0;
   stats.channels.cache.each(value => {
-    if (value.type === "category") { statsCats += 1; }
-    else if (value.type === "text") { statsText += 1; }
-    else if (value.type === "voice") { statsVoice += 1; }
-    else if (value.type === "announcement") { statsAnnouncement += 1; }
-    else if (value.type === "stage") { statsStage += 1; }
-    else if (value.type === "store") { statsStore += 1; }
+    if (value.type === "GUILD_CATEGORY") { statsCats += 1; }
+    else if (value.type === "GUILD_TEXT") { statsText += 1; }
+    else if (value.type === "GUILD_VOICE") { statsVoice += 1; }
+    else if (value.type === "GUILD_ANNOUNCEMENT") { statsAnnouncement += 1; }
+    else if (value.type === "GUILD_STAGE_VOICE") { statsStage += 1; }
+    else if (value.type === "GUILD_STORE") { statsStore += 1; }
+    else if (value.type === "GUILD_PUBLIC_THREAD") { statsThread += 1; }
   })
+
+  
   var statsCats = '```'
     + 'Kategorien: ' + statsCats + ' | '
     + 'Text: ' + statsText + ' | '
     + 'Voice: ' + statsVoice + '\n'
     + 'News: ' + statsAnnouncement + ' | '
     + 'Podium: ' + statsStage + ' | '
-    + 'Store: ' + statsStore
+    + 'Store: ' + statsStore + ' | '
+    + 'Threads: ' + statsThread
     + '```';
 
 
@@ -63,6 +67,6 @@ module.exports = (client, message, MessageEmbed) => {
   embedTemplate.setFooter('P.A.P.I. - Bot');      
 
   message.reply({ embeds: [embedTemplate] });
-  message.delete();
+  setTimeout(function () {message.delete();}, 200);   
 
 }

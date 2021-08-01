@@ -60,7 +60,7 @@ module.exports = (client, args, message, con, MessageEmbed) => {
     )
     embedTemplate.setFooter(result[0].discord_name);  
     message.reply({ embeds: [embedTemplate] });
-    message.delete();
+    setTimeout(function () {message.delete();}, 200);   
 
   });
 

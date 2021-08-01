@@ -6,7 +6,7 @@ module.exports = (client) => {
       return Math.floor(Math.random() * (max - min)) + min;
     }
 
-    const channelID_bump = "837331800429690931";
+    const channelID_bump = "850785436154462258";
     var randomTimer = getRandomInt(7200000, 10000000);
 
     const messageToBeSend = "!d bump";

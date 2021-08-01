@@ -30,7 +30,7 @@ con.getConnection(function(err) {
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const client = new Client({
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.DIRECT_MESSAGES ]
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.DIRECT_MESSAGES ]
 });
 
 const prefix = '!papi ';
@@ -60,7 +60,7 @@ client.on('messageCreate', function(message) {
 
   var isAdmin = false;
 
-  if (message.member.roles.cache.some(role => role.name === 'Admin')) {
+  if (message.member.roles.cache.some(role => role.name === 'Pen-And-Paper.info-Team')) {
     isAdmin = true;
   } else {
     isAdmin = false;
@@ -102,7 +102,7 @@ client.on('messageCreate', function(message) {
 			leiter(message, con, MessageEmbed);
 			break;
 		}
-		case 'bump': {
+		/* case 'bump': {
       if (isAdmin) {
         message.delete();
         const bump = require('./functions/bump.js');
@@ -111,7 +111,7 @@ client.on('messageCreate', function(message) {
         message.reply({ content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
       }
 			break;
-		}
+		} */
 		case 'roll': {
 			const rollSimple = require('./functions/roll/simple.js');
 			rollSimple(client, args, message, MessageEmbed);
@@ -170,7 +170,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 		}
 	}
 
-  if (reaction.message.channel.id != '868586831837556807' && counter === 0) {
+  if (reaction.message.channel.id != '871336259803553792' && counter === 0) {
 
     if (reaction._emoji.name === '🎲' && !user.bot) {
 
@@ -227,7 +227,7 @@ client.on('messageReactionRemove', async (reaction, user) => {
 		}
 	}
 
-  if (reaction.message.channel.id != '868586831837556807' && counter === 0) {
+  if (reaction.message.channel.id != '871336259803553792' && counter === 0) {
 
     if (['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'].includes(reaction._emoji.name) && !user.bot) {
 

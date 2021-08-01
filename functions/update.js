@@ -58,7 +58,7 @@ module.exports = (client, message, con, MessageEmbed) => {
     )
     embedTemplate.setFooter(result[0].discord_name);  
     message.reply({ embeds: [embedTemplate] });
-    message.delete();
+    setTimeout(function () {message.delete();}, 200);   
 
     con.query(`UPDATE pap_leiten SET posted = '1' WHERE id = '${result[0].id}'`,(err,result)=>{
       return;
