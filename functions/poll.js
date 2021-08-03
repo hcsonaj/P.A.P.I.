@@ -109,6 +109,8 @@ module.exports = (client, args, message, MessageEmbed, con) => {
       return;
     })
 
+    
+
     counter = 0;
     answers.forEach(value => {
       sendEmbed.react(emojiArray[counter]);
@@ -168,9 +170,11 @@ module.exports = (client, args, message, MessageEmbed, con) => {
 
         sendEmbed.edit({ embeds: [embedTemplateReaction] });
 
-        con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
-          return;
-        })
+        setTimeout(function() {
+          con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
+            return;
+          })
+        }, 500);
 
         /* var emoji = "";
 
@@ -235,6 +239,12 @@ module.exports = (client, args, message, MessageEmbed, con) => {
         embedTemplateReaction.setFooter('P.A.P.I. - Bot');
 
         sendEmbed.edit({ embeds: [embedTemplateReaction] });
+
+        setTimeout(function() {
+          con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
+            return;
+          })
+        }, 500);
 
         /* var emoji = "";
 

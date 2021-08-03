@@ -5,14 +5,12 @@ module.exports = (message, con, MessageEmbed) => {
 
   var today = new Date();
   var month = today.getMonth();
-  console.log(month.length);
   if (month.length === 1) {
     month = "0" + (parseInt(today.getMonth()) + 1);
   } else {
     month = (parseInt(today.getMonth()) + 1);
   }
-  today = today.getFullYear() + "-" + month + "-" + today.getDate();
-  console.log(today); 
+  today = today.getFullYear() + "-" + month + "-" + today.getDate(); 
 
   var user = message.author.username + '#' + message.author.discriminator;
 

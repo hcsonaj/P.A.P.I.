@@ -2,11 +2,9 @@ module.exports = (client, message, MessageEmbed) => {
 
   var resultDescription = 'Keine Sorge, ich kann dir helfen <@' + message.author.id + '>:\n\n';
 
-  if (message.member.roles.cache.some(role => role.name === 'Admin')) {
+  if (message.member.roles.cache.some(role => role.name === 'Pen-And-Paper.info-Team')) {
 
     resultDescription += 'Commands:\n\n```!papi update:\nMit diesem Befehl wird eine Runde gepostet, die noch nicht per Bot gepostet wurde.```\n';
-
-    resultDescription += '```!papi post x:\nMit diesem Befehl wird eine Runde gepostet, die schon per Bot gepostet wurde Das x wird ersetzt mit der URL der Runde.\n\nBeispiele:\n!papi post https://pen-and-paper.info/event/?id=e7361801-8a68-46ff-9f66-88adcb82590d```\n';
 
     resultDescription += '```!papi stats:\nMit diesem Befehl werden die Daten des Server ausgegeben.```\n';
 
@@ -26,6 +24,8 @@ module.exports = (client, message, MessageEmbed) => {
 
   resultDescription += '```!papi leiter:\nMit diesem Command erhälst du eine Liste mit den Spielrunden, die du auf der Webseite ausgehängt hast.```\n';
 
+  resultDescription += '```!papi post x:\nMit diesem Befehl wird eine Runde gepostet, die schon per Bot gepostet wurde Das x wird ersetzt mit der URL der Runde.\n\nBeispiele:\n!papi post https://pen-and-paper.info/event/?id=e7361801-8a68-46ff-9f66-88adcb82590d```\n';
+
   const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
 
@@ -35,5 +35,6 @@ module.exports = (client, message, MessageEmbed) => {
   embedTemplate.setFooter('P.A.P.I. - Bot');      
 
   message.reply({ embeds: [embedTemplate] });
+  setTimeout(function () {message.delete();}, 200);  
 
 }

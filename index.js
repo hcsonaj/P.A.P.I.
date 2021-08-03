@@ -79,16 +79,11 @@ client.on('messageCreate', function(message) {
 			break;
 		}
     case 'post': {
-      if (isAdmin) {
-        if (args[0]){
-          const post = require('./functions/post.js');
-			    post(client, args, message, con, MessageEmbed);
-        } else {
-          message.reply({content: 'Bitte gibt eine URL mit an, sonst funktioniert dieser Command nicht.\n\n`!papi post *url*`'})
-        }
-        
+      if (args[0]){
+        const post = require('./functions/post.js');
+        post(client, args, message, con, MessageEmbed);
       } else {
-        message.reply({ content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
+        message.reply({content: 'Bitte gibt eine URL mit an, sonst funktioniert dieser Command nicht.\n\n`!papi post *url*`'})
       }
 			break;
 		}
@@ -123,7 +118,6 @@ client.on('messageCreate', function(message) {
 			break;
 		}
 		case 'help': {
-			message.delete();
 			const help = require('./functions/help.js');
 			help(client, message, MessageEmbed);
 			break;
@@ -138,8 +132,14 @@ client.on('messageCreate', function(message) {
 			break;
 		}
     case 'play': {
+      /*
 			const play = require('./functions/music/play.js');
 			play(client, args, message);
+			break;
+			*/
+			message.reply({
+			  content: 'Wir haben leider noch Fehler gefunden und würden die Funktion so lange abschalten. Tut mir leid...'
+			});
 			break;
 		}
     case 'stop': {
@@ -173,6 +173,10 @@ client.on('messageReactionAdd', async (reaction, user) => {
   if (reaction.message.channel.id != '871336259803553792' && counter === 0) {
 
     if (reaction._emoji.name === '🎲' && !user.bot) {
+      
+      if (reaction.message.author.id != '862014814745264188') {
+        return;
+      }
 
       var messageId = reaction.message.reference.messageId;
       var channelId = reaction.message.reference.channelId;

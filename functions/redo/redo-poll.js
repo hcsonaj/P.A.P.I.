@@ -109,9 +109,12 @@ module.exports = (client, args2, message, MessageEmbed, con, data, sendEmoji, ty
 
   message.edit({ embeds: [embedTemplateReaction] });
 
-  con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${message.id}' `,(err,result)=>{
-    return;
-  }) 
+  setTimeout(function() {
+    con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${message.id}' `,(err,result)=>{
+      return;
+    }) 
+  }, 500)
+  
 
   //message.delete();  
 
