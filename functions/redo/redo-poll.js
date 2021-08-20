@@ -1,8 +1,9 @@
-module.exports = (client, args2, message, MessageEmbed, con, data, sendEmoji, type) => {
+module.exports = (client, args2, message, MessageEmbed, con, data, users, user, sendEmoji, type) => {
 
   var question = "";
   var answers = data;
   var tempAnswers = [];
+  var reactedUsers = users;
   var isQuestion = false;
   args = JSON.parse(args2);
 
@@ -67,10 +68,12 @@ module.exports = (client, args2, message, MessageEmbed, con, data, sendEmoji, ty
   if (type === '+') { collectedReactions++; }
   else if (type === '-') { collectedReactions--; }
 
+
+
   const embedTemplateReaction = new MessageEmbed()
     .setColor('#6f1f94')
-  embedTemplateReaction.setTitle('P.A.P.I. - ' + question);
-  embedTemplateReaction.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
+  embedTemplateReaction.setTitle(question);
+  embedTemplateReaction.setAuthor('P.A.P.I.');
 
   var indexOfEmoji = 0;
   emojiArray.forEach(function callback(value, index) {
@@ -82,6 +85,37 @@ module.exports = (client, args2, message, MessageEmbed, con, data, sendEmoji, ty
 
   if (type === '+') { answers[indexOfEmoji].reactions++; }
   else if (type === '-') { answers[indexOfEmoji].reactions--; }
+
+  var userIsInList = false;
+  if (reactedUsers != null) {
+    reactedUsers.forEach(value => {
+      if (value.id === user.id) {
+        userIsInList = true;
+      }
+    })
+  }
+  
+
+  if (!userIsInList) {
+    reactedUsers = new Array({
+      'id': user.id,
+      'reactions': 1
+    })
+  } else {
+    counter = 0;
+    reactedUsers.forEach(value => {
+      if (value.id === user.id) {
+        if (type === '+') {
+          reactedUsers[counter].reactions++;
+        } else if (type === '-') {
+          reactedUsers[counter].reactions--;
+        }
+        
+        return;
+      }
+      counter++;
+    })
+  }
   
   
   counter = 0;
@@ -100,17 +134,25 @@ module.exports = (client, args2, message, MessageEmbed, con, data, sendEmoji, ty
     }
   })
 
+  var reactedUsersCount = 0;
+  reactedUsers.forEach(value => {
+    if (value.reactions > 0) {
+      reactedUsersCount++;
+    }
+  });
+
   embedTemplateReaction.addFields(
     { name: 'Antwortmöglichkeiten', value: answerString },
+    { name: 'Abgestimmte User:', value: '**' + reactedUsersCount + '**' },
     { name: '***ACHTUNG***', value: 'Die Reaktionen brauchen so 1 bis 1.5 Sekunden um registriert zu werden. Klickt also bitte erst auf die nächste Reaktion, wenn sich die Nachricht angepasst hat.'}
   )
 
-  embedTemplateReaction.setFooter('P.A.P.I. - Bot');
+  embedTemplateReaction.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
 
   message.edit({ embeds: [embedTemplateReaction] });
 
   setTimeout(function() {
-    con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${message.id}' `,(err,result)=>{
+    con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}', users = '${JSON.stringify(reactedUsers)}' WHERE messageID = '${message.id}' `,(err,result)=>{
       return;
     }) 
   }, 500)

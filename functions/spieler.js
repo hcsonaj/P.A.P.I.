@@ -10,8 +10,8 @@ module.exports = (message, con, MessageEmbed) => {
     const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
  
-    embedTemplate.setTitle('P.A.P.I. - Deine Anmeldungen auf der Webseite');
-    embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
+    embedTemplate.setTitle('Deine Anmeldungen auf unserer Webseite');
+    embedTemplate.setAuthor('P.A.P.I.');
 
     if (result.length >= 1) {
       result.forEach(value => {
@@ -32,9 +32,9 @@ module.exports = (message, con, MessageEmbed) => {
       )
     }
 
-    embedTemplate.setFooter('P.A.P.I. - Bot');  
+    embedTemplate.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");  
     message.reply({ embeds: [embedTemplate] });
-    setTimeout(function () {message.delete();}, 200);   
+    setTimeout(function () {message.delete();}, 500);   
 
   });
 

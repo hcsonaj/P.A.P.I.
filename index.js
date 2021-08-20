@@ -17,7 +17,11 @@ var con = mysql.createPool({
 	user: 'wp_penjan_1_w',
 	password: 'GsCMvu7Rub7tRcn7',
 	database: 'wp_penjan_db1',
-	charset: 'utf8mb4_unicode_ci'
+	charset: 'utf8mb4_unicode_ci',
+	connectionLimit: 1000,
+  connectTimeout: 60 * 60 * 1000,
+  acquireTimeout: 60 * 60 * 1000,
+  timeout: 60 * 60 * 1000
 });
 
 con.getConnection(function(err) {
@@ -30,7 +34,7 @@ con.getConnection(function(err) {
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const client = new Client({
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.DIRECT_MESSAGES ]
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_PRESENCES ]
 });
 
 const prefix = '!papi ';
@@ -78,6 +82,15 @@ client.on('messageCreate', function(message) {
       }
 			break;
 		}
+    case 'calc': {
+      if (isAdmin) {
+        const calc = require('./functions/calc.js');
+			  calc(message, args, MessageEmbed);
+      } else {
+        message.reply({content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
+      }
+			break;
+		}
     case 'post': {
       if (args[0]){
         const post = require('./functions/post.js');
@@ -107,11 +120,30 @@ client.on('messageCreate', function(message) {
       }
 			break;
 		} */
+    case 'gen': {
+			const gen = require('./functions/generate.js');
+			gen(message, args, MessageEmbed);
+			break;
+		}
 		case 'roll': {
 			const rollSimple = require('./functions/roll/simple.js');
 			rollSimple(client, args, message, MessageEmbed);
 			break;
 		}
+    case 'r': {
+      if (args[0] === 'sr') {
+        args.shift();
+        const shadowrun = require('./functions/roll/shadowrun.js');
+        shadowrun(client, args, message, MessageEmbed);
+      } else if (args[0] === 'ct') {
+        args.shift();
+        const cthulhu = require('./functions/roll/cthulhu.js');
+        cthulhu(client, args, message, MessageEmbed);
+      } else {
+        message.reply({ content: 'Upps, hier fehlt mir das Spielsystem auf das ich würfeln soll. Mögliche Spielsysteme:\n\nShadowrun => !papi r sr {x}'});
+      }
+      break;
+    }
     case 'poll': {
 			const poll = require('./functions/poll.js');
 			poll(client, args, message, MessageEmbed, con);
@@ -119,7 +151,7 @@ client.on('messageCreate', function(message) {
 		}
 		case 'help': {
 			const help = require('./functions/help.js');
-			help(client, message, MessageEmbed);
+			help(client, message, args, MessageEmbed);
 			break;
 		}
 		case 'stats': {
@@ -210,10 +242,11 @@ client.on('messageReactionAdd', async (reaction, user) => {
       con.query(`SELECT * FROM bot_messages WHERE messageID = '${reaction.message.id}'`,async (err,result)=>{
 
         data = JSON.parse(result[0].data);
+        users = JSON.parse(result[0].users);
         argsPoll = result[0].args;
 
         const redo_poll = require('./functions/redo/redo-poll.js');
-			  redo_poll(client, argsPoll, reaction.message, MessageEmbed, con, data, reaction._emoji.name, '+');
+			  redo_poll(client, argsPoll, reaction.message, MessageEmbed, con, data, users, user, reaction._emoji.name, '+');
 
       });
 
@@ -249,10 +282,11 @@ client.on('messageReactionRemove', async (reaction, user) => {
       con.query(`SELECT * FROM bot_messages WHERE messageID = '${reaction.message.id}'`,async (err,result)=>{
 
         data = JSON.parse(result[0].data);
+        users = JSON.parse(result[0].users);
         argsPoll = result[0].args;
 
         const redo_poll = require('./functions/redo/redo-poll.js');
-			  redo_poll(client, argsPoll, reaction.message, MessageEmbed, con, data, reaction._emoji.name, '-');
+			  redo_poll(client, argsPoll, reaction.message, MessageEmbed, con, data, users, user, reaction._emoji.name, '-');
 
       });
 

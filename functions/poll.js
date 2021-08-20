@@ -3,6 +3,7 @@ module.exports = (client, args, message, MessageEmbed, con) => {
   var question = "";
   var answers = [];
   var tempAnswers = [];
+  var reactedUsers = [];
   var isQuestion = false;
 
   var emojiArray = [
@@ -77,14 +78,14 @@ module.exports = (client, args, message, MessageEmbed, con) => {
   const embedTemplate = new MessageEmbed()
     .setColor('#6f1f94')
 
-  embedTemplate.setTitle('P.A.P.I. - ' + question);
-  embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
+  embedTemplate.setTitle(question);
+  embedTemplate.setAuthor('P.A.P.I.');
 
   var answerString = '';
 
   counter = 0;
 
-  if (answers.length >= 10) {
+  if (answers.length > 10) {
     message.reply({ content: 'Bitte nur 10 Möglichkeiten angeben...' });
     return;
   }
@@ -97,10 +98,11 @@ module.exports = (client, args, message, MessageEmbed, con) => {
 
   embedTemplate.addFields(
     { name: 'Antwortmöglichkeiten', value: answerString },
+    { name: 'Abgestimmte User:', value: '**' + '0' + '**' },
     { name: '***ACHTUNG***', value: 'Die Reaktionen brauchen so 1 bis 1.5 Sekunden um registriert zu werden. Klickt also bitte erst auf die nächste Reaktion, wenn sich die Nachricht angepasst hat.'}
   )
 
-  embedTemplate.setFooter('P.A.P.I. - Bot');  
+  embedTemplate.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");  
 
 
   message.reply({ embeds: [embedTemplate] }).then(sendEmbed => {
@@ -128,7 +130,7 @@ module.exports = (client, args, message, MessageEmbed, con) => {
       dispose: true
     });
 
-    collector.on('collect', (collected, reason) => {
+    collector.on('collect', (collected, user, reason) => {
       
       if (reason === 'time') {
         sendEmbed.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
@@ -139,7 +141,7 @@ module.exports = (client, args, message, MessageEmbed, con) => {
 
         const embedTemplateReaction = new MessageEmbed()
           .setColor('#6f1f94')
-        embedTemplateReaction.setTitle('P.A.P.I. - ' + question);
+        embedTemplateReaction.setTitle(question);
         embedTemplateReaction.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
 
         var indexOfEmoji = 0;
@@ -151,6 +153,30 @@ module.exports = (client, args, message, MessageEmbed, con) => {
         })
 
         answers[indexOfEmoji].reactions++;
+
+        var userIsInList = false;
+        reactedUsers.forEach(value => {
+          if (value.id === user.id) {
+            userIsInList = true;
+          }
+        })
+
+        if (!userIsInList) {
+          reactedUsers.push({
+            'id': user.id,
+            'reactions': 1
+          })
+        } else {
+          counter = 0;
+          reactedUsers.forEach(value => {
+            if (value.id === user.id) {
+              reactedUsers[counter].reactions++;
+              return;
+            }
+            counter++;
+          })
+        }
+
         
         counter = 0;
         var answerString = '';
@@ -161,20 +187,33 @@ module.exports = (client, args, message, MessageEmbed, con) => {
           counter++;
         })
 
+
+        var reactedUsersCount = 0;
+        reactedUsers.forEach(value => {
+          if (value.reactions > 0) {
+            reactedUsersCount++;
+          }
+        });
+
+
         embedTemplateReaction.addFields(
           { name: 'Antwortmöglichkeiten', value: answerString },
+          { name: 'Abgestimmte User:', value: '**' + reactedUsersCount + '**' },
           { name: '***ACHTUNG***', value: 'Die Reaktionen brauchen so 1 bis 1.5 Sekunden um registriert zu werden. Klickt also bitte erst auf die nächste Reaktion, wenn sich die Nachricht angepasst hat.'}
         )
 
-        embedTemplateReaction.setFooter('P.A.P.I. - Bot');
+        embedTemplateReaction.setFooter('P.A.P.I. - Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
 
         sendEmbed.edit({ embeds: [embedTemplateReaction] });
 
+        
+
         setTimeout(function() {
-          con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
+          con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}', users = '${JSON.stringify(reactedUsers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
             return;
           })
         }, 500);
+
 
         /* var emoji = "";
 
@@ -189,7 +228,7 @@ module.exports = (client, args, message, MessageEmbed, con) => {
 
 
 
-    collector.on('remove', (collected, reason) => {
+    collector.on('remove', (collected, user, reason) => {
       
       if (reason === 'time') {
         sendEmbed.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
@@ -200,7 +239,7 @@ module.exports = (client, args, message, MessageEmbed, con) => {
 
         const embedTemplateReaction = new MessageEmbed()
           .setColor('#6f1f94')
-        embedTemplateReaction.setTitle('P.A.P.I. - ' + question);
+        embedTemplateReaction.setTitle(question);
         embedTemplateReaction.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
 
         var indexOfEmoji = 0;
@@ -212,6 +251,19 @@ module.exports = (client, args, message, MessageEmbed, con) => {
         })
 
         answers[indexOfEmoji].reactions--;
+
+
+        
+        counter = 0;
+        reactedUsers.forEach(value => {
+          if (value.id === user.id) {
+            reactedUsers[counter].reactions--;
+            return;
+          }
+          counter++;
+        })
+
+        
         
         counter = 0;
         var answerString = '';
@@ -230,18 +282,25 @@ module.exports = (client, args, message, MessageEmbed, con) => {
           
         })
 
+        var reactedUsersCount = 0;
+        reactedUsers.forEach(value => {
+          if (value.reactions > 0) {
+            reactedUsersCount++;
+          }
+        });
+
         embedTemplateReaction.addFields(
           { name: 'Antwortmöglichkeiten', value: answerString },
+          { name: 'Abgestimmte User:', value: '**' + reactedUsersCount + '**' },
           { name: '***ACHTUNG***', value: 'Die Reaktionen brauchen so 1 bis 1.5 Sekunden um registriert zu werden. Klickt also bitte erst auf die nächste Reaktion, wenn sich die Nachricht angepasst hat.'}
-
         )
 
-        embedTemplateReaction.setFooter('P.A.P.I. - Bot');
+        embedTemplateReaction.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
 
         sendEmbed.edit({ embeds: [embedTemplateReaction] });
 
         setTimeout(function() {
-          con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
+          con.query(`UPDATE bot_messages SET data = '${JSON.stringify(answers)}', users = '${JSON.stringify(reactedUsers)}' WHERE messageID = '${sendEmbed.id}' `,(err,result)=>{
             return;
           })
         }, 500);

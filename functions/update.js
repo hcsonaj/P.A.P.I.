@@ -50,12 +50,14 @@ module.exports = (client, message, con, MessageEmbed) => {
     var cleanDescription = htmlEntities.decode(result[0].description).replace(/(<([^>]+)>)/gi, "");
 
     embedTemplate.setURL("https://pen-and-paper.info/event/?id=" + result[0].id);
-    embedTemplate.setTitle(result[0].title);
+    embedTemplate.setTitle(decodeEntities(result[0].title));
     embedTemplate.setDescription(decodeEntities(cleanDescription).substring(0, 500) + ' [...]');
-    embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
+    embedTemplate.setAuthor('P.A.P.I.');
     embedTemplate.setImage(cleanURL);
     if(result[0].date_playing != "0000-00-00 00:00:00") {
-      embedTemplate.setTimestamp(result[0].date_playing);
+      let niceDate = new Date(result[0].date_playing);
+      niceDate.setHours(niceDate.getHours() - 2);
+      embedTemplate.setTimestamp(niceDate);
     }
     embedTemplate.addFields(
       { name: 'System', value: '```' + result[0].name + '```' },
@@ -63,15 +65,16 @@ module.exports = (client, message, con, MessageEmbed) => {
       { name: 'Spieleranzahl', value: '```' + result[0].currentPlayer + ' / ' + result[0].maxplayer + '```', inline: true },
       { name: 'für Beginner', value: '```' + cleanBeginner + '```', inline: true }
     )
-    embedTemplate.setFooter(result[0].discord_name);  
+    embedTemplate.setFooter(result[0].discord_name, "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");  
     message.reply({ embeds: [embedTemplate] });
-    setTimeout(function () {message.delete();}, 200);   
 
     con.query(`UPDATE pap_leiten SET posted = '1' WHERE id = '${result[0].id}'`,(err,result)=>{
       return;
     })
 
   });
+
+  if (errorCount === 1) {
 
   con.query(`SELECT pap_leiten.id, pap_leiten.title, pap_leiten.description, pap_leiten.image, pap_leiten.discord_name, pap_leiten.date_playing, pap_leiten.campain, pap_leiten.oneshot, pap_leiten.multishot, pap_leiten.beginners, pap_leiten.currentPlayer, pap_leiten.maxplayer, pap_leiten.system FROM pap_leiten, pap_systems WHERE pap_leiten.active = '1' AND pap_leiten.posted = '0'`,async (err,result)=>{
 
@@ -96,12 +99,14 @@ module.exports = (client, message, con, MessageEmbed) => {
     var cleanDescription = htmlEntities.decode(result[0].description).replace(/(<([^>]+)>)/gi, "");
 
     embedTemplate.setURL("https://pen-and-paper.info/event/?id=" + result[0].id);
-    embedTemplate.setTitle(result[0].title);
+    embedTemplate.setTitle(decodeEntities(result[0].title));
     embedTemplate.setDescription(decodeEntities(cleanDescription).substring(0, 500) + ' [...]');
     embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
     embedTemplate.setImage(cleanURL);
     if(result[0].date_playing != "0000-00-00 00:00:00") {
-      embedTemplate.setTimestamp(result[0].date_playing);
+      let niceDate = new Date(result[0].date_playing);
+      let nicerDate = niceDate.toLocaleDateString('de-DE', options);
+      embedTemplate.setTimestamp(nicerDate);
     }
     embedTemplate.addFields(
       { name: 'System', value: '```' + result[0].system + '```' },
@@ -109,15 +114,18 @@ module.exports = (client, message, con, MessageEmbed) => {
       { name: 'Spieleranzahl', value: '```' + result[0].currentPlayer + ' / ' + result[0].maxplayer + '```', inline: true },
       { name: 'für Beginner', value: '```' + cleanBeginner + '```', inline: true }
     )
-    embedTemplate.setFooter(result[0].discord_name);  
-    message.reply({ embeds: [embedTemplate] });
-    setTimeout(function () {message.delete();}, 200);   
+    embedTemplate.setFooter(result[0].discord_name, "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");  
+    message.reply({ embeds: [embedTemplate] }); 
 
     con.query(`UPDATE pap_leiten SET posted = '1' WHERE id = '${result[0].id}'`,(err,result)=>{
       return;
     })
 
   });
+
+  }
+
+  setTimeout(function () {message.delete();}, 3000);
 
   if (errorCount > 0) {
     message.reply({ content: 'Alle aktuellen Runden abgeholt!' });

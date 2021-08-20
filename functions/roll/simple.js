@@ -35,7 +35,7 @@ module.exports = (client, args, message, MessageEmbed) => {
 
       for (let i = 0; i < rollActual[0]; i++) {
 
-        tempRoll = getRandomInt(1,rollActual[1])
+        tempRoll = getRandomInt(1,(parseInt(rollActual[1]) + 1))
         result += tempRoll;
         resultDescription += '[' + tempRoll + '] ';
 
@@ -71,46 +71,14 @@ module.exports = (client, args, message, MessageEmbed) => {
       const embedTemplate = new MessageEmbed()
           .setColor('#6f1f94')
 
-      embedTemplate.setTitle('P.A.P.I. - Würfelergebnis');
+      embedTemplate.setTitle('Würfelergebnis');
       embedTemplate.setDescription(resultDescription);
-      embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
-      embedTemplate.setFooter('P.A.P.I. - Würfelbot');      
+      embedTemplate.setAuthor('P.A.P.I.');
+      embedTemplate.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");      
 
       message.reply({ embeds: [embedTemplate] }).then(sentEmbed => {
 
         sentEmbed.react("🎲");
-
-        const filter = (reaction, user) => {
-          return ['🎲'].includes(reaction.emoji.name) && !user.bot;
-        };
-
-
-        const collector = sentEmbed.createReactionCollector({
-          filter,
-          max: 1,
-          time: 3600000
-        });
-
-        collector.on('end', (collected, reason) => {
-          
-          if (reason === 'time') {
-            sentEmbed.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
-
-          } else {
-
-            var emoji = "";
-
-            let userReaction = collected.forEach(value => {
-              emoji = value._emoji.name;
-            });
-
-            if (emoji === '🎲') {
-              doTheRoll();
-            }
-          }
-
-            
-        })
 
       });
 

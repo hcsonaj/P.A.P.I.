@@ -9,8 +9,14 @@ module.exports = (client, message, MessageEmbed) => {
 
 
   // CATEGORIES
-  var statsCats = 0; var statsText = 0; var statsVoice = 0;
-  var statsAnnouncement = 0; var statsStage = 0; var statsStore = 0; var statsThread = 0;
+  var statsCats = 0;
+  var statsText = 0;
+  var statsVoice = 0;
+  var statsAnnouncement = 0;
+  var statsStage = 0;
+  var statsStore = 0;
+  var statsThread = 0;
+  var statsCounts = 0;
   stats.channels.cache.each(value => {
     if (value.type === "GUILD_CATEGORY") { statsCats += 1; }
     else if (value.type === "GUILD_TEXT") { statsText += 1; }
@@ -19,6 +25,7 @@ module.exports = (client, message, MessageEmbed) => {
     else if (value.type === "GUILD_STAGE_VOICE") { statsStage += 1; }
     else if (value.type === "GUILD_STORE") { statsStore += 1; }
     else if (value.type === "GUILD_PUBLIC_THREAD") { statsThread += 1; }
+    statsCounts++;
   })
 
   
@@ -33,12 +40,27 @@ module.exports = (client, message, MessageEmbed) => {
     + '```';
 
 
+  // MEMBERS
+  var statsMembers = '```' + '```';
+  var statsMembersReal = 0;
+  var statsMembersBots = 0;
+
+  stats.members.cache.each(value => {
+    if (value.user.bot) {
+      statsMembersBots++;
+    } else {
+      statsMembersReal++;
+    }
+  })
+
 
   // ROLES
   var statsRoles = '```';
+  var statsRolesCount = 0;
   stats.roles.cache.each(value => {
     if (value.name === "@everyone") { return }
-    statsRoles += value.name + ' | '
+    statsRoles += value.name + ' | ';
+    statsRolesCount++;
   })
   statsRoles += '```';
 
@@ -52,21 +74,20 @@ module.exports = (client, message, MessageEmbed) => {
   embedTemplate.addFields(
     { name: 'Name', value: '```' + stats.name + '```', inline: true },
     { name: 'Owner', value: '```' + client.users.cache.get(stats.ownerId).username + '```', inline: true },
-    { name: 'Members', value: '```' + stats.memberCount + '```' },
+    { name: 'Members [' + (statsMembersReal + statsMembersBots) + ']', value: '```' + 'Mitglieder: ' + statsMembersReal + ' | Bots: ' + statsMembersBots + '```' },
     { name: 'ID', value: '```' + stats.id + '```', inline: true },
-    { name: 'Region', value: '```' + stats.region + '```', inline: true },
-    { name: 'Categories & Channels', value: statsCats },
+    { name: 'Categories & Channels [' + statsCounts + ']', value: statsCats },
     { name: 'Emojis', value: '```' + statsEmoji + '```' },
     { name: 'Boost Level', value: '```' + stats.premiumTier + '```', inline: true },
     { name: 'Boost Amount', value: '```' + stats.premiumSubscriptionCount + '```', inline: true },
-    { name: 'Rollen', value: statsRoles }
+    { name: 'Rollen [' + statsRolesCount + ']', value: statsRoles }
   )
 
-  embedTemplate.setTitle('P.A.P.I. - Serverstats');
-  embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
-  embedTemplate.setFooter('P.A.P.I. - Bot');      
+  embedTemplate.setTitle('📋 Server-Statistiken 📋');
+  embedTemplate.setAuthor('P.A.P.I.');
+  embedTemplate.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");      
 
   message.reply({ embeds: [embedTemplate] });
-  setTimeout(function () {message.delete();}, 200);   
+  setTimeout(function () {message.delete();}, 500);   
 
 }
