@@ -1,9 +1,11 @@
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
 const { joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, StreamType } = require('@discordjs/voice');
+
  
 module.exports = async (client, args, message) => {
 
+  
   const voiceChannel = message.member.voice.channel;
 
   if (!voiceChannel) return message.channel.send({content: 'Sorry, du musst in einem Voice-Channel sein für diesen Befehl!'});

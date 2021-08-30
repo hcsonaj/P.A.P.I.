@@ -10,8 +10,7 @@ module.exports = (message, con, MessageEmbed) => {
     const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
  
-    embedTemplate.setTitle('Deine Anmeldungen auf unserer Webseite');
-    embedTemplate.setAuthor('P.A.P.I.');
+    embedTemplate.setTitle('🧞 Deine Anmeldungen auf unserer Webseite 🧞');
 
     if (result.length >= 1) {
       result.forEach(value => {

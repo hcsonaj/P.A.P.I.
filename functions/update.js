@@ -39,7 +39,7 @@ module.exports = (client, message, con, MessageEmbed) => {
     const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
 
-    cleanURL = result[0].image;
+    cleanURL = result[0].image.replaceAll(' ', '%20');
 
     if (result[0].oneshot === 1) { cleanType = "Oneshot"; }
     if (result[0].campain === 1) { cleanType = "Kampagne"; }
@@ -52,7 +52,6 @@ module.exports = (client, message, con, MessageEmbed) => {
     embedTemplate.setURL("https://pen-and-paper.info/event/?id=" + result[0].id);
     embedTemplate.setTitle(decodeEntities(result[0].title));
     embedTemplate.setDescription(decodeEntities(cleanDescription).substring(0, 500) + ' [...]');
-    embedTemplate.setAuthor('P.A.P.I.');
     embedTemplate.setImage(cleanURL);
     if(result[0].date_playing != "0000-00-00 00:00:00") {
       let niceDate = new Date(result[0].date_playing);
@@ -88,7 +87,7 @@ module.exports = (client, message, con, MessageEmbed) => {
     const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
 
-    cleanURL = result[0].image;
+    cleanURL = result[0].image.replaceAll(' ', '%20');
 
     if (result[0].oneshot === 1) { cleanType = "Oneshot"; }
     if (result[0].campain === 1) { cleanType = "Kampagne"; }
@@ -101,7 +100,6 @@ module.exports = (client, message, con, MessageEmbed) => {
     embedTemplate.setURL("https://pen-and-paper.info/event/?id=" + result[0].id);
     embedTemplate.setTitle(decodeEntities(result[0].title));
     embedTemplate.setDescription(decodeEntities(cleanDescription).substring(0, 500) + ' [...]');
-    embedTemplate.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
     embedTemplate.setImage(cleanURL);
     if(result[0].date_playing != "0000-00-00 00:00:00") {
       let niceDate = new Date(result[0].date_playing);
@@ -125,10 +123,10 @@ module.exports = (client, message, con, MessageEmbed) => {
 
   }
 
-  setTimeout(function () {message.delete();}, 3000);
-
   if (errorCount > 0) {
     message.reply({ content: 'Alle aktuellen Runden abgeholt!' });
   }
+
+  setTimeout(function () {message.delete();}, 3000);
 
 }

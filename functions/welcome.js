@@ -25,7 +25,7 @@ module.exports = (client) => {
 
     const channel = member.guild.channels.cache.get(channelID_welcome);
 
-    setTimeout(function(){ channel.send({ content: messageToBeSend }); }, 30000);
+    setTimeout(function(){ channel.send({ content: messageToBeSend }); }, getRandomInt(30000, 60000));
 
   })
 

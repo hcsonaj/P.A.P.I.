@@ -21,7 +21,7 @@ module.exports = (message, con, MessageEmbed) => {
     const embedTemplate = new MessageEmbed()
       .setColor('#6f1f94')
  
-    embedTemplate.setTitle('Deine Spielrunden auf unserer Webseite');
+    embedTemplate.setTitle('🧙 Deine Spielrunden auf unserer Webseite 🧙');
     embedTemplate.setAuthor('P.A.P.I.');
 
     if (result.length >= 1) {

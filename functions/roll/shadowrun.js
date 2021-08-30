@@ -212,7 +212,7 @@ module.exports = (client, args, message, MessageEmbed) => {
       const embedTemplate = new MessageEmbed()
           .setColor('#6f1f94')
 
-      embedTemplate.setTitle('Shadowrun-Ergebnis');
+      embedTemplate.setTitle('🎲 Shadowrun-Ergebnis 🎲');
       if (rollCount > 0) {
         embedTemplate.setDescription(resultDescription + '\n\nExplodierte Sechser:\n' + resultDescription2);
       } else {

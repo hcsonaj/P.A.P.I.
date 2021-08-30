@@ -11,7 +11,6 @@ app.listen(port, () =>
 
 // ================= MYSQL-CONNECTION =================
 
-mysql = require('mysql');
 var con = mysql.createPool({
 	host: 'sql84.your-server.de',
 	user: 'wp_penjan_1_w',
@@ -41,7 +40,8 @@ const prefix = '!papi ';
 var cleanURL;
 
 client.on('ready', () => {
-	console.log(`Logged in as ${client.user.tag}!`);
+
+	console.log(`Angemeldet als: ${client.user.tag}!`);
 	client.user.setActivity('!papi', { type: 'LISTENING' });
 
 	const welcome = require('./functions/welcome.js');
@@ -49,6 +49,10 @@ client.on('ready', () => {
 
 	const role = require('./functions/role.js');
 	role(client);
+
+  const parti = require('./functions/newParti.js');
+	parti(client, con);
+
 });
 
 client.on('messageCreate', function(message) {
@@ -73,7 +77,7 @@ client.on('messageCreate', function(message) {
 	const messageChannelID = message.author.lastMessageChannelID;
 
 	switch (command) {
-		case 'update': {
+		/* case 'update': {
       if (isAdmin) {
         const update = require('./functions/update.js');
 			  update(client, message, con, MessageEmbed);
@@ -81,7 +85,7 @@ client.on('messageCreate', function(message) {
         message.reply({content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
       }
 			break;
-		}
+		} */
     case 'calc': {
       if (isAdmin) {
         const calc = require('./functions/calc.js');
@@ -110,16 +114,6 @@ client.on('messageCreate', function(message) {
 			leiter(message, con, MessageEmbed);
 			break;
 		}
-		/* case 'bump': {
-      if (isAdmin) {
-        message.delete();
-        const bump = require('./functions/bump.js');
-        bump(client);
-      } else {
-        message.reply({ content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
-      }
-			break;
-		} */
     case 'gen': {
 			const gen = require('./functions/generate.js');
 			gen(message, args, MessageEmbed);
@@ -140,7 +134,7 @@ client.on('messageCreate', function(message) {
         const cthulhu = require('./functions/roll/cthulhu.js');
         cthulhu(client, args, message, MessageEmbed);
       } else {
-        message.reply({ content: 'Upps, hier fehlt mir das Spielsystem auf das ich würfeln soll. Mögliche Spielsysteme:\n\nShadowrun => !papi r sr {x}'});
+        message.reply({ content: 'Upps, hier fehlt mir das Spielsystem auf das ich würfeln soll. Mögliche Spielsysteme:\n\nShadowrun => !papi r sr {x}\n\nCthulhu => !papi r ct {x}'});
       }
       break;
     }
@@ -163,22 +157,23 @@ client.on('messageCreate', function(message) {
       }
 			break;
 		}
-    case 'play': {
-      /*
-			const play = require('./functions/music/play.js');
-			play(client, args, message);
-			break;
-			*/
-			message.reply({
-			  content: 'Wir haben leider noch Fehler gefunden und würden die Funktion so lange abschalten. Tut mir leid...'
-			});
-			break;
-		}
-    case 'stop': {
-			message.delete();
-			const stop = require('./functions/music/stop.js');
-			stop(message);
-			break;
+    case 'music': {
+      /* if (args[0] === "play") {
+        args.shift();
+        const play = require('./functions/music/play.js');
+        play(client, args, message);    
+      } else if (args[0] === "stop") {
+        args.shift();
+        const stop = require('./functions/music/play.js');
+        stop(message);    
+      } else {
+	      message.reply(
+				  { content: 'Das war leider kein offizieller Command. Für Hilfe nutze bitte den Command **!papi help**'}
+			  );
+      } */
+      message.reply({ content: 'Heyyy, du hast einen Befehl gefunden der nur für Administratoren ist. Herzlichen Glückwunsch!'})
+      break;
+      
 		}
 		default: {
 			message.reply(
@@ -225,7 +220,35 @@ client.on('messageReactionAdd', async (reaction, user) => {
           }, 2000)
 
           const rollSimple = require('./functions/roll/simple.js');
-			    rollSimple(client, args2, msg, MessageEmbed);
+			    rollSimple(client, args2, msg, MessageEmbed, user.id);
+
+        })
+      });
+
+    } else if (reaction._emoji.name === '🐙' && !user.bot) {
+      
+      if (reaction.message.author.id != '862014814745264188') {
+        return;
+      }
+
+      var messageId = reaction.message.reference.messageId;
+      var channelId = reaction.message.reference.channelId;
+      client.channels.cache.get(channelId).fetch(messageId).then(cnl => {
+        cnl.messages.fetch(messageId).then(msg => {
+
+          const commandBody2 = msg.content.slice(prefix.length);
+	        const args2 = commandBody2.split(' ');
+	        const command2 = args2.shift().toLowerCase();
+
+          counter++;
+          setTimeout(() => {
+            counter = 0;
+          }, 2000)
+
+          args2.shift();
+
+          const cthulhu = require('./functions/roll/cthulhu.js');
+          cthulhu(client, args2, msg, MessageEmbed, user.id);
 
         })
       });

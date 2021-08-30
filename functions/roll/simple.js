@@ -1,4 +1,4 @@
-module.exports = (client, args, message, MessageEmbed) => {
+module.exports = (client, args, message, MessageEmbed, reactionID) => {
 
   function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -30,7 +30,12 @@ module.exports = (client, args, message, MessageEmbed) => {
       }
       
       var result = 0;
-      var resultDescription = '<@' + message.author.id + '> hat folgende Ergebnisse geworfen:\n\n```';
+
+      if (reactionID != null) {
+        var resultDescription = '<@' + reactionID + '> hat folgendes Ergebniss geworfen:\n\n```';
+      } else {
+        var resultDescription = '<@' + message.author.id + '> hat folgendes Ergebniss geworfen:\n\n```';
+      }
       var resultMod = "";
 
       for (let i = 0; i < rollActual[0]; i++) {
@@ -71,9 +76,8 @@ module.exports = (client, args, message, MessageEmbed) => {
       const embedTemplate = new MessageEmbed()
           .setColor('#6f1f94')
 
-      embedTemplate.setTitle('Würfelergebnis');
+      embedTemplate.setTitle('🎲 Würfelergebnis 🎲');
       embedTemplate.setDescription(resultDescription);
-      embedTemplate.setAuthor('P.A.P.I.');
       embedTemplate.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");      
 
       message.reply({ embeds: [embedTemplate] }).then(sentEmbed => {
