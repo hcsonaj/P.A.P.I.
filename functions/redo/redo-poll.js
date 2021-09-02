@@ -73,7 +73,6 @@ module.exports = (client, args2, message, MessageEmbed, con, data, users, user, 
   const embedTemplateReaction = new MessageEmbed()
     .setColor('#6f1f94')
   embedTemplateReaction.setTitle('📊' + question + '📊');
-  embedTemplateReaction.setAuthor('P.A.P.I.');
 
   var indexOfEmoji = 0;
   emojiArray.forEach(function callback(value, index) {

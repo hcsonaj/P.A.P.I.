@@ -63,7 +63,7 @@ module.exports = (client, args, message, con, MessageEmbed) => {
     embedTemplate.addFields(
       { name: 'System', value: '```' + result[0].name + '```' },
       { name: 'Typ', value: '```' + cleanType + '```' , inline: true },
-      { name: 'Spieleranzahl', value: '```' + result[0].currentPlayer + ' / ' + result[0].maxplayer + '```', inline: true },
+      { name: 'Spieler (Stand: Post-Datum)', value: '```' + result[0].currentPlayer + ' / ' + result[0].maxplayer + '```', inline: true },
       { name: 'für Beginner', value: '```' + cleanBeginner + '```', inline: true }
     )
     embedTemplate.setFooter(result[0].discord_name, "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");  

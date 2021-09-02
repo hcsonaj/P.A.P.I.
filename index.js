@@ -225,7 +225,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         })
       });
 
-    } else if (reaction._emoji.name === '🐙' && !user.bot) {
+    } else if (reaction._emoji.name === 'cutehulhu' && !user.bot) {
       
       if (reaction.message.author.id != '862014814745264188') {
         return;

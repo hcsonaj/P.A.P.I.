@@ -79,7 +79,6 @@ module.exports = (client, args, message, MessageEmbed, con) => {
     .setColor('#6f1f94')
 
   embedTemplate.setTitle('📊' + question + '📊');
-  embedTemplate.setAuthor('P.A.P.I.');
 
   var answerString = '';
 
@@ -142,7 +141,6 @@ module.exports = (client, args, message, MessageEmbed, con) => {
         const embedTemplateReaction = new MessageEmbed()
           .setColor('#6f1f94')
         embedTemplateReaction.setTitle('📊' + question + '📊');
-        embedTemplateReaction.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
 
         var indexOfEmoji = 0;
         emojiArray.forEach(function callback(value, index) {
@@ -240,7 +238,6 @@ module.exports = (client, args, message, MessageEmbed, con) => {
         const embedTemplateReaction = new MessageEmbed()
           .setColor('#6f1f94')
         embedTemplateReaction.setTitle('📊' + question + '📊');
-        embedTemplateReaction.setAuthor('P.A.P.I.', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");
 
         var indexOfEmoji = 0;
         emojiArray.forEach(function callback(value, index) {

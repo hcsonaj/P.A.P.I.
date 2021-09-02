@@ -64,6 +64,9 @@ module.exports = (client, args, message, MessageEmbed, reactionID) => {
       diceThrowArray[0] = diceThrow;
     }
 
+    let toRollFifth = (toRoll / 5).toFixed(0);
+    let toRollHalf = (toRoll / 2).toFixed(0);
+
 
 
     const embedTemplate = new MessageEmbed()
@@ -74,17 +77,33 @@ module.exports = (client, args, message, MessageEmbed, reactionID) => {
 
       resultDescription += '<:dice_cthulhu_1:' + dice_cthulhu_1 + '> auf eine ' + toRoll + "\n\n**KRITISCHER ERFOLG**\n\n";
 
-    } else if (diceThrow === 100) {
+    } else if (toRoll >= 50 && diceThrow === 100) {
 
       resultDescription += '<:dice_cthulhu_100:' + dice_cthulhu_100 + '> auf eine ' + toRoll + "\n\n**KRITISCHER FEHLSCHLAG**\n\n";
 
-    } else if (diceThrow >= 2 && diceThrow <= 10) {
+    } else if (toRoll < 50 && diceThrow > 94) {
+
+      diceThrowArray.forEach(value => {
+        diceResult += '<:dice_bad_' + value + ':' + dice_bad[value] + '>';
+      })
+
+      resultDescription += diceResult + '> auf eine ' + toRoll + "\n\n**KRITISCHER FEHLSCHLAG**\n\n";
+
+    } else if (diceThrow <= toRollFifth) {
 
       diceThrowArray.forEach(value => {
         diceResult += '<:dice_good_' + value + ':' + dice_good[value] + '>';
       })
 
-      resultDescription += diceResult + ' auf eine ' + toRoll + "\n\n**GROẞER ERFOLG**\n\n";
+      resultDescription += diceResult + ' auf eine ' + toRoll + "\n\n**EXTREMER ERFOLG**\n\n";
+
+    } else if (diceThrow <= toRollHalf) {
+
+      diceThrowArray.forEach(value => {
+        diceResult += '<:dice_good_' + value + ':' + dice_good[value] + '>';
+      })
+
+      resultDescription += diceResult + ' auf eine ' + toRoll + "\n\n**SCHWIERIGER ERFOLG**\n\n";
 
     } else if (diceThrow <= toRoll) {
 
@@ -107,11 +126,11 @@ module.exports = (client, args, message, MessageEmbed, reactionID) => {
 
     embedTemplate.setTitle('<:cutehulhu:' + cutehulhu + '> Cthulhu-Ergebnis <:cutehulhu:' + cutehulhu + '>');
     embedTemplate.setDescription(resultDescription);
-    embedTemplate.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");    
+    embedTemplate.setFooter('P.A.P.I. - Der Premium-Bot', "https://cdn.discordapp.com/icons/702197930504880208/a_0eab0088a5da7f1da2d5afb6168bf7f8.gif");   
 
     message.reply({ embeds: [embedTemplate] }).then(sentEmbed => {
 
-      sentEmbed.react("🐙");
+      sentEmbed.react(cutehulhu);
 
     });
 
